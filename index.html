@@ -106,6 +106,36 @@
     animation: rise .9s cubic-bezier(.2,.7,.3,1) forwards;
   }
   .hero::before{content:"";position:absolute;left:50%;top:0;width:720px;height:420px;max-width:100%;transform:translateX(-50%);background:radial-gradient(closest-side, rgba(255,31,45,0.14), transparent);pointer-events:none;z-index:-1;}
+  .hero::after{
+    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background-image:linear-gradient(rgba(240,242,246,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(240,242,246,.045) 1px, transparent 1px);
+    background-size:56px 56px;
+    -webkit-mask-image:radial-gradient(closest-side at 50% 35%, #000, transparent);
+            mask-image:radial-gradient(closest-side at 50% 35%, #000, transparent);
+  }
+  .hero.wrap{padding-left:24px; padding-right:24px;}
+  .hero-tag{
+    display:inline-flex; align-items:center; gap:10px; margin:0 auto 22px;
+    font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--text-mute);
+    padding:8px 16px; border:1px solid var(--hair-strong); border-radius:999px;
+    background:rgba(255,31,45,.07);
+    opacity:0; animation: rise .9s cubic-bezier(.2,.7,.3,1) .08s forwards;
+  }
+  .hero-tag i{width:8px; height:8px; border-radius:50%; background:var(--magenta); box-shadow:0 0 12px var(--magenta);}
+  .hero h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg, #ff4a55, #ff1f2d 45%, #c9ced6);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-chips{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:640px; margin:28px auto 0;
+    opacity:0; animation: rise .9s cubic-bezier(.2,.7,.3,1) .26s forwards;
+  }
+  .hero-chips li{
+    font-size:13px; font-weight:500; color:var(--text-hi);
+    padding:7px 14px; border-radius:8px; background:rgba(240,242,246,.05); border:1px solid var(--hair);
+  }
+  .hero-chips li.more{color:var(--magenta); border-style:dashed; border-color:rgba(255,31,45,.4); background:transparent;}
   .hero h1{
     font-size:clamp(34px, 6vw, 60px);
     line-height:1.05;
@@ -117,7 +147,7 @@
   }
   .hero .sub{
     margin:22px auto 0;
-    max-width:520px;
+    max-width:560px;
     font-size:17px;
     line-height:1.6;
     color:var(--text-mute);
@@ -146,7 +176,7 @@
     to{opacity:1; transform:translateY(0);}
   }
   @media (prefers-reduced-motion: reduce){
-    .hero-mark,.hero h1,.hero .sub,.hero-links{animation:none; opacity:1;}
+    .hero-mark,.hero-tag,.hero h1,.hero .sub,.hero-chips,.hero-links{animation:none; opacity:1;}
   }
 
   /* diagonal seam under hero, echoing the mane's sharp cut */
@@ -276,10 +306,14 @@
   <div class="hero-mark">
     <img src="logo.png" alt="Leorus Tech logo">
   </div>
-  <h1>Four apps built for the errands your day actually runs on.</h1>
-  <p class="sub">Leorus Tech makes small, single-purpose mobile apps — one job each, done properly. No bloated dashboard to learn, just the right tool when you need it.</p>
+  <span class="hero-tag"><i></i>Mobile apps &amp; software</span>
+  <h1>Smart apps for the <em>everyday work</em> that never stops.</h1>
+  <p class="sub">Leorus Tech designs and builds fast, focused mobile apps for business, money, learning and daily life — with more on the way.</p>
+  <ul class="hero-chips">
+    <li>Billbook</li><li>Vedic Diary</li><li>Moneylog</li><li>TutorManager</li><li class="more">More coming soon</li>
+  </ul>
   <div class="hero-links">
-    <a class="btn-primary" href="#apps">See the apps</a>
+    <a class="btn-primary" href="#apps">Explore our apps</a>
     <a class="btn-ghost" href="#contact">Get in touch</a>
   </div>
 </section>
@@ -289,8 +323,8 @@
 <section id="apps" class="apps">
   <div class="wrap">
     <div class="apps-head">
-      <span class="eyebrow">What we're building</span>
-      <h2>Four apps, four different jobs — none of them trying to be everything.</h2>
+      <span class="eyebrow">Our apps</span>
+      <h2>Focused apps, each built to do one job really well.</h2>
     </div>
 
     <div class="app-grid">
