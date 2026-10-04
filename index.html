@@ -127,15 +127,6 @@
     background:linear-gradient(100deg, #ff4a55, #ff1f2d 45%, #c9ced6);
     -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .hero-chips{
-    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:640px; margin:28px auto 0;
-    opacity:0; animation: rise .9s cubic-bezier(.2,.7,.3,1) .26s forwards;
-  }
-  .hero-chips li{
-    font-size:13px; font-weight:500; color:var(--text-hi);
-    padding:7px 14px; border-radius:8px; background:rgba(240,242,246,.05); border:1px solid var(--hair);
-  }
-  .hero-chips li.more{color:var(--magenta); border-style:dashed; border-color:rgba(255,31,45,.4); background:transparent;}
   .hero h1{
     font-size:clamp(34px, 6vw, 60px);
     line-height:1.05;
@@ -176,7 +167,7 @@
     to{opacity:1; transform:translateY(0);}
   }
   @media (prefers-reduced-motion: reduce){
-    .hero-mark,.hero-tag,.hero h1,.hero .sub,.hero-chips,.hero-links{animation:none; opacity:1;}
+    .hero-mark,.hero-tag,.hero h1,.hero .sub,.hero-links{animation:none; opacity:1;}
   }
 
   /* diagonal seam under hero, echoing the mane's sharp cut */
@@ -337,9 +328,6 @@
   <span class="hero-tag"><i></i>Mobile apps &amp; software</span>
   <h1>Smart apps for the <em>everyday work</em> that never stops.</h1>
   <p class="sub">Leorus Tech designs and builds fast, focused mobile apps for business, money, learning and daily life — with more on the way.</p>
-  <ul class="hero-chips">
-    <li>Billbook</li><li>Vedic Diary</li><li>Moneylog</li><li>TutorManager</li><li class="more">More coming soon</li>
-  </ul>
   <div class="hero-links">
     <a class="btn-primary" href="#apps">Explore our apps</a>
     <a class="btn-ghost" href="#contact">Get in touch</a>
