@@ -282,10 +282,14 @@
     .app-card .shine{display:none;}
   }
 
-  .app-magenta{ --accent: var(--magenta); --accent-soft: var(--magenta-soft); }
-  .app-violet{ --accent: var(--violet); --accent-soft: var(--violet-soft); }
-  .app-azure{ --accent: var(--azure); --accent-soft: var(--azure-soft); }
-  .app-cyan{ --accent: var(--cyan); --accent-soft: var(--cyan-soft); }
+  /* default: silver look (card 3); on hover: red look (card 1) */
+  @property --accent{ syntax:'<color>'; inherits:true; initial-value:#c9ced6; }
+  @property --accent-soft{ syntax:'<color>'; inherits:true; initial-value:rgba(201,206,214,0.12); }
+  .app-row{
+    --accent: var(--azure); --accent-soft: var(--azure-soft);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1), filter .35s ease, --accent .45s ease, --accent-soft .45s ease;
+  }
+  .app-row:hover, .app-row:focus-within{ --accent: var(--magenta); --accent-soft: var(--magenta-soft); }
 
   /* ---------- FOOTER ---------- */
   .footer{padding:80px 0 48px; text-align:center;}
