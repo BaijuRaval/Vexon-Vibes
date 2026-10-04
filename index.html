@@ -193,61 +193,81 @@
   }
   .apps-head h2{font-size:clamp(26px,4vw,36px); font-weight:600; line-height:1.15;}
 
-  .app-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:26px; counter-reset:app;}
-  .app-row, .app-row.right{display:block; margin:0;}
+  .app-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:28px; counter-reset:app;}
+  .app-row, .app-row.right{
+    display:block; margin:0;
+    opacity:0; transform:translateY(26px);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1), filter .35s ease;
+  }
+  .app-row.is-in{opacity:1; transform:none;}
+  .app-row.is-in:hover{filter:drop-shadow(0 22px 34px color-mix(in srgb, var(--accent) 30%, transparent));}
+  .no-io .app-row{opacity:1; transform:none;}
   .app-card{
-    --cut:26px;
+    --cut:30px;
     counter-increment:app;
     height:100%;
     display:flex; flex-direction:column;
     background:
-      linear-gradient(160deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 42%),
-      linear-gradient(180deg, #1c1c22, #131317);
+      radial-gradient(70% 90px at 50% 0, color-mix(in srgb, var(--accent) 28%, transparent), transparent),
+      linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 45%),
+      linear-gradient(180deg, #1d1d23, #121216);
     border:1px solid var(--hair);
     border-top:2px solid var(--accent);
-    clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
-    padding:32px 30px 28px;
+    clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+    padding:32px 30px 26px;
     position:relative;
     overflow:hidden;
-    transition:transform .3s ease, background .3s ease;
+    transition:transform .35s cubic-bezier(.2,.7,.3,1);
   }
+  .app-card:hover{transform:translateY(-8px);}
+  /* diagonal edge on the cut corner */
+  .app-card::after{
+    content:""; position:absolute; top:-1px; right:0; width:var(--cut); height:var(--cut);
+    background:linear-gradient(to top right, transparent calc(50% - 1px), var(--accent) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
+    opacity:.8; pointer-events:none;
+  }
+  /* sweeping shine on hover */
+  .app-card .shine{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(105deg, transparent 35%, rgba(255,255,255,.07) 50%, transparent 65%);
+    transform:translateX(-120%); transition:transform .9s ease;
+  }
+  .app-card:hover .shine{transform:translateX(120%);}
   .app-card::before{
     content:"0" counter(app);
-    position:absolute; right:22px; bottom:56px;
-    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:120px; line-height:1;
-    color:transparent; -webkit-text-stroke:1px rgba(240,242,246,0.07);
-    pointer-events:none;
+    position:absolute; right:24px; top:84px;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:84px; line-height:1;
+    color:transparent; -webkit-text-stroke:1px rgba(240,242,246,0.08);
+    pointer-events:none; transition:-webkit-text-stroke-color .3s ease;
   }
-  .app-card::after{
-    content:""; position:absolute; left:0; right:0; top:0; height:90px;
-    background:radial-gradient(60% 100% at 50% 0, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
-    opacity:.55; transition:opacity .3s ease; pointer-events:none;
-  }
-  .app-card:hover{transform:translateY(-6px);}
-  .app-card:hover::after{opacity:1;}
+  .app-card:hover::before{-webkit-text-stroke-color:color-mix(in srgb, var(--accent) 45%, transparent);}
   .app-top{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:26px; position:relative; z-index:1;}
   .app-icon{
-    width:58px; height:58px; position:relative; flex:none;
-    background:rgba(0,0,0,.45); border:1px solid var(--hair-strong); border-radius:14px;
-    box-shadow:inset 0 2px 6px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.06);
+    width:60px; height:60px; flex:none; display:grid; place-items:center;
+    color:var(--accent);
+    background:linear-gradient(145deg, color-mix(in srgb, var(--accent) 22%, #0a0a0c), #0a0a0c);
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent); border-radius:16px;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.7), 0 0 22px -4px color-mix(in srgb, var(--accent) 55%, transparent);
   }
-  .app-icon span{
-    position:absolute; display:block; border-radius:5px; background:var(--accent);
-    transform:scale(.72); transform-origin:left top;
+  .app-icon svg{width:28px; height:28px;}
+  .app-name{
+    font-size:27px; font-weight:700; position:relative; z-index:1;
+    background:linear-gradient(180deg, #ffffff, #b9bfca); -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  .app-name{font-size:26px; font-weight:700; position:relative; z-index:1;}
   .app-category{
     font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
     color:var(--accent); background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);
     padding:6px 12px; border-radius:999px; text-align:right;
   }
   .app-tag{font-size:16px; color:var(--text-mute); margin:6px 0 22px; line-height:1.5; position:relative; z-index:1;}
-  .app-features{display:flex; flex-direction:column; gap:12px; margin-bottom:28px; position:relative; z-index:1;}
+  .app-features{display:flex; flex-direction:column; gap:10px; margin-bottom:28px; position:relative; z-index:1;}
   .app-features li{
-    font-size:14.5px; color:var(--text-mute); padding-left:24px; position:relative; line-height:1.5;
+    font-size:14.5px; color:#c3c8d1; line-height:1.5;
+    padding:10px 12px 10px 38px; position:relative;
+    background:rgba(240,242,246,.035); border:1px solid var(--hair); border-radius:10px;
   }
   .app-features li::before{
-    content:""; position:absolute; left:2px; top:6px; width:8px; height:8px;
+    content:""; position:absolute; left:14px; top:50%; width:7px; height:7px; margin-top:-5px;
     border-right:2px solid var(--accent); border-top:2px solid var(--accent); transform:rotate(45deg);
   }
   .app-foot{
@@ -255,14 +275,21 @@
     display:flex; align-items:center; justify-content:space-between; gap:14px;
     padding-top:20px; border-top:1px solid var(--hair);
   }
-  .app-meta{font-size:13px; color:var(--text-dim);}
+  .app-meta{white-space:nowrap; font-size:13px; color:var(--text-dim); display:inline-flex; align-items:center; gap:8px;}
+  .app-meta svg{width:18px; height:18px; color:var(--accent);}
   .app-status{
     font-size:13.5px; font-weight:700; color:#0a0a0c; background:var(--accent);
-    text-decoration:none; padding:11px 20px; white-space:nowrap; flex:none;
+    text-decoration:none; padding:12px 22px 12px 26px; white-space:nowrap; flex:none;
+    display:inline-flex; align-items:center; gap:8px;
     clip-path:polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
     transition:filter .2s ease, transform .2s ease;
   }
+  .app-status svg{width:15px; height:15px;}
   .app-status:hover{filter:brightness(1.15); transform:translateY(-1px);}
+  @media (prefers-reduced-motion: reduce){
+    .app-row{opacity:1; transform:none; transition:none;}
+    .app-card .shine{display:none;}
+  }
 
   .app-magenta{ --accent: var(--magenta); --accent-soft: var(--magenta-soft); }
   .app-violet{ --accent: var(--violet); --accent-soft: var(--violet-soft); }
@@ -289,6 +316,7 @@
 
   @media (max-width:720px){
     .app-grid{grid-template-columns:1fr;}
+    .app-foot{flex-wrap:wrap;}
     .app-card{padding:28px 24px 26px;}
   }
 </style>
@@ -328,14 +356,11 @@
     </div>
 
     <div class="app-grid">
-    <div class="app-row left">
+    <div class="app-row left app-magenta">
       <article class="app-card app-magenta">
+        <span class="shine"></span>
         <div class="app-top">
-          <div class="app-icon">
-            <span style="width:20px;height:20px; left:0; top:8px;"></span>
-            <span style="width:14px;height:14px; left:24px; top:0;"></span>
-            <span style="width:11px;height:11px; left:26px; top:24px; opacity:.6;"></span>
-          </div>
+          <div class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></div>
           <span class="app-category">Billing &amp; invoicing</span>
         </div>
         <div class="app-name">Billbook</div>
@@ -346,20 +371,17 @@
           <li>Built for shops, freelancers and small businesses</li>
         </ul>
         <div class="app-foot">
-          <span class="app-meta">Android · direct APK</span>
-          <a class="app-status" href="https://saimedicalgroup.com/leorus/bill_book/apk/base.apk">Download APK</a>
+          <span class="app-meta"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 9h10v8a1 1 0 0 1-1 1h-1v3a1.2 1.2 0 0 1-2.4 0v-3h-1.2v3A1.2 1.2 0 0 1 9 21v-3H8a1 1 0 0 1-1-1zM5.2 9.4a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zm11.2 0a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zM7.2 8a5 5 0 0 1 9.6 0z"/></svg>Android · direct APK</span>
+          <a class="app-status" href="https://saimedicalgroup.com/leorus/bill_book/apk/base.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Download APK</a>
         </div>
       </article>
     </div>
 
-    <div class="app-row right">
+    <div class="app-row right app-violet">
       <article class="app-card app-violet">
+        <span class="shine"></span>
         <div class="app-top">
-          <div class="app-icon">
-            <span style="width:16px;height:16px; left:2px; top:2px;"></span>
-            <span style="width:22px;height:22px; left:20px; top:14px;"></span>
-            <span style="width:10px;height:10px; left:0; top:28px; opacity:.6;"></span>
-          </div>
+          <div class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><circle cx="12" cy="15" r="2"/></svg></div>
           <span class="app-category">Panchang &amp; rituals</span>
         </div>
         <div class="app-name">Vedic Diary</div>
@@ -370,20 +392,17 @@
           <li>Follows the Vedic calendar, not just the Gregorian one</li>
         </ul>
         <div class="app-foot">
-          <span class="app-meta">Android · direct APK</span>
-          <a class="app-status" href="https://saimedicalgroup.com/leorus/vedic_diary/apk/base.apk">Download APK</a>
+          <span class="app-meta"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 9h10v8a1 1 0 0 1-1 1h-1v3a1.2 1.2 0 0 1-2.4 0v-3h-1.2v3A1.2 1.2 0 0 1 9 21v-3H8a1 1 0 0 1-1-1zM5.2 9.4a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zm11.2 0a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zM7.2 8a5 5 0 0 1 9.6 0z"/></svg>Android · direct APK</span>
+          <a class="app-status" href="https://saimedicalgroup.com/leorus/vedic_diary/apk/base.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Download APK</a>
         </div>
       </article>
     </div>
 
-    <div class="app-row left">
+    <div class="app-row left app-azure">
       <article class="app-card app-azure">
+        <span class="shine"></span>
         <div class="app-top">
-          <div class="app-icon">
-            <span style="width:24px;height:24px; left:0; top:11px; border-radius:50%;"></span>
-            <span style="width:12px;height:12px; left:28px; top:2px;"></span>
-            <span style="width:9px;height:9px; left:30px; top:22px; opacity:.6;"></span>
-          </div>
+          <div class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h15a3 3 0 0 1 3 3v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l12-3v3"/><circle cx="17" cy="14" r="1"/></svg></div>
           <span class="app-category">Personal finance</span>
         </div>
         <div class="app-name">Moneylog</div>
@@ -394,20 +413,17 @@
           <li>See where your money actually goes</li>
         </ul>
         <div class="app-foot">
-          <span class="app-meta">Android · direct APK</span>
-          <a class="app-status" href="https://saimedicalgroup.com/leorus/moneylog/apk/base.apk">Download APK</a>
+          <span class="app-meta"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 9h10v8a1 1 0 0 1-1 1h-1v3a1.2 1.2 0 0 1-2.4 0v-3h-1.2v3A1.2 1.2 0 0 1 9 21v-3H8a1 1 0 0 1-1-1zM5.2 9.4a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zm11.2 0a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zM7.2 8a5 5 0 0 1 9.6 0z"/></svg>Android · direct APK</span>
+          <a class="app-status" href="https://saimedicalgroup.com/leorus/moneylog/apk/base.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Download APK</a>
         </div>
       </article>
     </div>
 
-    <div class="app-row right">
+    <div class="app-row right app-cyan">
       <article class="app-card app-cyan">
+        <span class="shine"></span>
         <div class="app-top">
-          <div class="app-icon">
-            <span style="width:26px;height:8px; left:0; top:6px;"></span>
-            <span style="width:14px;height:14px; left:6px; top:18px;"></span>
-            <span style="width:9px;height:9px; left:32px; top:0; opacity:.6;"></span>
-          </div>
+          <div class="app-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/><path d="M22 9v6"/></svg></div>
           <span class="app-category">Tutoring &amp; classes</span>
         </div>
         <div class="app-name">TutorManager</div>
@@ -418,8 +434,8 @@
           <li>Built for tutors juggling more than one class</li>
         </ul>
         <div class="app-foot">
-          <span class="app-meta">Android · direct APK</span>
-          <a class="app-status" href="https://saimedicalgroup.com/leorus/tutormanager/apk/base.apk">Download APK</a>
+          <span class="app-meta"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 9h10v8a1 1 0 0 1-1 1h-1v3a1.2 1.2 0 0 1-2.4 0v-3h-1.2v3A1.2 1.2 0 0 1 9 21v-3H8a1 1 0 0 1-1-1zM5.2 9.4a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zm11.2 0a1.2 1.2 0 0 1 2.4 0V15a1.2 1.2 0 0 1-2.4 0zM7.2 8a5 5 0 0 1 9.6 0z"/></svg>Android · direct APK</span>
+          <a class="app-status" href="https://saimedicalgroup.com/leorus/tutormanager/apk/base.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg>Download APK</a>
         </div>
       </article>
     </div>
@@ -437,6 +453,14 @@
 </footer>
 
 <script>
+  (function(){
+    var rows = document.querySelectorAll('.app-row');
+    if (!('IntersectionObserver' in window)) { document.documentElement.classList.add('no-io'); return; }
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } });
+    }, {threshold:.15});
+    rows.forEach(function(r,i){ r.style.transitionDelay = (i%2)*0.12+'s'; io.observe(r); });
+  })();
   (function(){
     var loader = document.getElementById('loader');
     var MIN_MS = 5000;
