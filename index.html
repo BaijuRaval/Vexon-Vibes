@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="logo.webp" type="image/webp">
+<noscript><style>.loader{display:none!important} body.is-loading{overflow:auto!important}</style></noscript>
 <style>
   :root{
     --bg: #0a0a0c;
@@ -56,6 +58,8 @@
     position:relative;
     width:min(72vw, 380px); aspect-ratio:1;
   }
+  .loader-inner{opacity:0; transition:opacity .5s ease;}
+  .loader.is-ready .loader-inner{opacity:1;}
   .loader-logo{position:absolute; inset:0; width:100%; height:100%; object-fit:contain;}
   /* black engraved base: silhouette with a pressed-in edge highlight */
   .loader-logo.engraved{
@@ -70,9 +74,10 @@
     -webkit-mask-size:300% 100%; mask-size:300% 100%;
     -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
     -webkit-mask-position:100% 0; mask-position:100% 0;
-    animation:colorize 4.2s cubic-bezier(.45,.05,.35,1) .5s forwards;
     filter:drop-shadow(0 0 22px rgba(255,31,45,.35));
   }
+  /* animation starts only once the logo has loaded (.is-ready) */
+  .loader.is-ready .loader-logo.color{animation:colorize 4.2s cubic-bezier(.45,.05,.35,1) .5s forwards;}
   @keyframes colorize{
     to{ -webkit-mask-position:0% 0; mask-position:0% 0; }
   }
@@ -363,14 +368,14 @@
 
 <div id="loader" class="loader" aria-hidden="true">
   <div class="loader-inner">
-    <img class="loader-logo engraved" src="logo.png" alt="">
-    <img class="loader-logo color" src="logo.png" alt="Leorus Tech">
+    <img class="loader-logo engraved" src="logo.webp" alt="">
+    <img class="loader-logo color" src="logo.webp" alt="Leorus Tech">
   </div>
 </div>
 
 <section class="hero wrap">
   <div class="hero-mark">
-    <img src="logo.png" alt="Leorus Tech logo">
+    <img src="logo.webp" alt="Leorus Tech logo">
   </div>
   <span class="hero-tag"><i></i>Mobile apps &amp; software</span>
   <h1>Smart apps for the <em>everyday work</em> that never stops.</h1>
@@ -498,20 +503,40 @@
   })();
   (function(){
     var loader = document.getElementById('loader');
-    var MIN_MS = 5000;
-    var start = Date.now();
-    function reveal(){
-      var wait = Math.max(0, MIN_MS - (Date.now() - start));
+    var MIN_MS = 5000;   // time the colorize sequence needs once the logo is visible
+    var MAX_WAIT = 10000; // never block the page longer than this waiting for the logo
+    var imgs = Array.prototype.slice.call(loader.querySelectorAll('img'));
+    var readyAt = 0, pageLoaded = false, finished = false;
+
+    function finish(){
+      if (finished || !readyAt || !pageLoaded) return;
+      var wait = Math.max(0, MIN_MS - (Date.now() - readyAt));
+      finished = true;
       setTimeout(function(){
         loader.classList.add('is-hidden');
         document.body.classList.remove('is-loading');
       }, wait);
     }
-    if (document.readyState === 'complete') {
-      reveal();
-    } else {
-      window.addEventListener('load', reveal);
+    function ready(){
+      if (readyAt) return;
+      readyAt = Date.now();
+      loader.classList.add('is-ready'); // starts the engraved -> colour sequence
+      finish();
     }
+    function imgDone(img){
+      return new Promise(function(res){
+        if (img.complete && img.naturalWidth) return res();
+        img.addEventListener('load', res);
+        img.addEventListener('error', res);
+      });
+    }
+    Promise.all(imgs.map(imgDone)).then(function(){
+      return Promise.all(imgs.map(function(i){ return i.decode ? i.decode().catch(function(){}) : 0; }));
+    }).then(ready);
+    setTimeout(ready, MAX_WAIT);
+
+    if (document.readyState === 'complete') { pageLoaded = true; finish(); }
+    else window.addEventListener('load', function(){ pageLoaded = true; finish(); });
   })();
 </script>
 
