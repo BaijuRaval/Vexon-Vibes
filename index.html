@@ -409,6 +409,88 @@
     color:var(--ink-2);
     border-top-color:rgba(255,255,255,.06); box-shadow:0 -1px 0 #000;
   }
+
+  /* ---------- NAV ---------- */
+  html{scroll-padding-top:72px;}
+  .nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:12px max(20px, env(safe-area-inset-left)) 12px;
+    background:rgba(10,10,12,.82); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+    border-bottom:1px solid #000; box-shadow:0 1px 0 rgba(255,255,255,.05);
+  }
+  .nav-brand{display:flex; align-items:center; gap:10px; text-decoration:none;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; letter-spacing:.14em; font-size:13px; color:var(--text-hi);}
+  .nav-brand img{width:30px; height:30px; border-radius:8px;}
+  .nav-links{display:flex; align-items:center; gap:4px;}
+  .nav-links a{
+    text-decoration:none; font-size:13.5px; font-weight:500; color:var(--text-mute);
+    padding:8px 12px; border-radius:8px; transition:color .2s ease, background .2s ease;
+  }
+  .nav-links a:hover{color:#fff; background:rgba(255,31,45,.12);}
+  .nav-links a.nav-cta{color:#fff; background:linear-gradient(120deg,#ff1f2d,#c8102e);}
+  @media (max-width:560px){ .nav-links a.opt{display:none;} .nav-brand span{letter-spacing:.1em;} }
+
+  /* ---------- NEW SECTIONS: engraved tiles that light up on scroll ---------- */
+  .band{background:var(--bg-raise); padding:72px 0 8px;}
+  .band + .apps{padding-top:56px;}
+  .band-after{padding:24px 0 72px;}
+  .band-after + .band-after{padding-top:0;}
+  .lit{
+    --p:0;
+    --accent: color-mix(in srgb, var(--magenta) calc(var(--p) * 100%), #4a4d57);
+    --ink: color-mix(in srgb, #ffffff calc(var(--p) * 100%), #8a8e98);
+    --ink-2: color-mix(in srgb, #c3c8d1 calc(var(--p) * 100%), #6a6e78);
+    background:linear-gradient(180deg, #0d0d10, #08080a);
+    border:1px solid #000; border-top:2px solid var(--accent);
+    box-shadow:inset 0 4px 14px rgba(0,0,0,.95), inset 0 -1px 0 rgba(255,255,255,.05), 0 18px 30px -20px rgba(255,31,45,calc(.55 * var(--p)));
+    position:relative;
+  }
+  .lit h3{font-size:19px; font-weight:700; color:var(--ink); text-shadow:0 0 18px rgba(255,31,45,calc(.4 * var(--p))), 0 1px 0 rgba(255,255,255,.08), 0 -1px 1px rgba(0,0,0,.95); margin:0 0 8px;}
+  .lit p{margin:0; font-size:14.5px; line-height:1.6; color:var(--ink-2); text-shadow:0 1px 0 rgba(255,255,255,.05);}
+  .lit strong{color:var(--ink);}
+
+  .tiles{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:22px;}
+  .tile{padding:28px 26px 26px; border-radius:6px 22px 6px 6px;}
+  .tile-icon{
+    width:54px; height:54px; display:grid; place-items:center; margin-bottom:18px;
+    color:var(--accent); background:#050506; border:1px solid #000; border-radius:14px;
+    box-shadow:inset 0 3px 8px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.07), 0 0 22px -4px rgba(255,31,45,calc(.6 * var(--p)));
+  }
+  .tile-icon svg{width:26px; height:26px;}
+
+  .steps{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:22px; list-style:none; margin:0; padding:0;}
+  .step{padding:28px 26px 26px; border-radius:6px 22px 6px 6px; overflow:hidden;}
+  .step-n{
+    display:block; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:54px; line-height:1; margin-bottom:14px;
+    color:transparent; -webkit-text-stroke:1px color-mix(in srgb, var(--magenta) calc(var(--p) * 70%), rgba(255,255,255,.12));
+  }
+
+  .faq-wrap{max-width:860px;}
+  .faq{display:flex; flex-direction:column; gap:12px;}
+  .faq-item{border-radius:6px 16px 6px 6px; padding:0;}
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:18px 54px 18px 22px; position:relative;
+    font-size:16px; font-weight:600; color:var(--ink); text-shadow:0 1px 0 rgba(255,255,255,.08), 0 -1px 1px rgba(0,0,0,.95);
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{
+    content:""; position:absolute; right:22px; top:50%; width:9px; height:9px; margin-top:-7px;
+    border-right:2px solid var(--accent); border-bottom:2px solid var(--accent); transform:rotate(45deg); transition:transform .25s ease;
+  }
+  .faq-item[open] summary::after{transform:rotate(-135deg); margin-top:-2px;}
+  .faq-item p{padding:0 22px 20px;}
+
+  .foot-contact{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin:6px 0 28px;}
+  .foot-contact[hidden]{display:none;}
+  .foot-links{display:flex; flex-wrap:wrap; gap:6px 22px; justify-content:center; margin-top:30px;}
+  .foot-links a{font-size:13.5px; color:var(--ink-2); text-decoration:none; transition:color .2s ease;}
+  .foot-links a:hover{color:var(--magenta);}
+
+  @media (max-width:860px){
+    .tiles, .steps{grid-template-columns:1fr;}
+    .band{padding-top:56px;}
+  }
 </style>
 </head>
 <body class="is-loading">
@@ -419,6 +501,17 @@
     <img class="loader-logo color" src="logo.webp" alt="Leorus Tech">
   </div>
 </div>
+
+<header class="nav" id="top">
+  <a class="nav-brand" href="#top" aria-label="Leorus Tech home"><img src="favicon.png" alt="" width="30" height="30"><span>LEORUS TECH</span></a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#apps">Apps</a>
+    <a class="opt" href="#why">Why us</a>
+    <a class="opt" href="#install">Install</a>
+    <a class="opt" href="#faq">FAQ</a>
+    <a class="nav-cta" href="#contact">Contact</a>
+  </nav>
+</header>
 
 <section class="hero wrap">
   <div class="hero-mark">
@@ -435,6 +528,32 @@
 </section>
 
 <div class="seam"></div>
+
+<section id="why" class="band">
+  <div class="wrap">
+    <div class="apps-head">
+      <span class="eyebrow">Why Leorus Tech</span>
+      <h2>Built small, on purpose.</h2>
+    </div>
+    <div class="tiles">
+      <article class="tile lit">
+        <div class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>One job per app</h3>
+        <p>Every app does a single thing and does it properly — no bloated dashboard to learn.</p>
+      </article>
+      <article class="tile lit">
+        <div class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg></div>
+        <h3>Made for real errands</h3>
+        <p>Billing, panchang, money and classes: the everyday admin your day actually runs on.</p>
+      </article>
+      <article class="tile lit">
+        <div class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></div>
+        <h3>Straight to your phone</h3>
+        <p>Download the APK right from this page and install it on your Android phone.</p>
+      </article>
+    </div>
+  </div>
+</section>
 
 <section id="apps" class="apps">
   <div class="wrap">
@@ -531,10 +650,44 @@
   </div>
 </section>
 
+<section id="install" class="band band-after">
+  <div class="wrap">
+    <div class="apps-head">
+      <span class="eyebrow">How to install</span>
+      <h2>Up and running in three steps.</h2>
+    </div>
+    <ol class="steps">
+      <li class="step lit"><span class="step-n">01</span><h3>Download</h3><p>Tap <strong>Download APK</strong> on the app you want.</p></li>
+      <li class="step lit"><span class="step-n">02</span><h3>Allow the install</h3><p>Open the downloaded file. If Android asks, allow installs from your browser — this is normal for apps outside the Play Store.</p></li>
+      <li class="step lit"><span class="step-n">03</span><h3>Open and use</h3><p>Finish the install and open the app from your home screen.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="faq" class="band band-after">
+  <div class="wrap faq-wrap">
+    <div class="apps-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Quick answers.</h2>
+    </div>
+    <div class="faq">
+      <details class="faq-item lit"><summary>Which phones do the apps run on?</summary><p>The apps are currently built for Android phones.</p></details>
+      <details class="faq-item lit"><summary>Why a direct APK download?</summary><p>For now the apps are distributed as direct APK downloads from this page, so you can install them without waiting for a store listing.</p></details>
+      <details class="faq-item lit"><summary>Android shows a warning when I install. Is that normal?</summary><p>Yes. Android warns about any app installed from outside the Play Store. Follow the three steps above and allow the install from your browser when asked.</p></details>
+      <details class="faq-item lit"><summary>Is there an iPhone version?</summary><p>Not at the moment — the apps listed on this page are Android only.</p></details>
+      <details class="faq-item lit"><summary>Will you add more apps?</summary><p>Yes. New apps are added to this page as they are ready.</p></details>
+    </div>
+  </div>
+</section>
+
 <footer class="footer" id="contact">
   <div class="wrap">
     <div class="foot-mark"><img class="eng" src="logo.webp" alt="" aria-hidden="true"><img class="col" src="logo.webp" alt="Leorus Tech"></div>
     <blockquote class="foot-quote">Small, focused apps for the parts of your day admin quietly runs.</blockquote>
+    <div class="foot-contact" id="foot-contact" hidden></div>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="#apps">Apps</a><a href="#install">Install</a><a href="#faq">FAQ</a><a href="#top">Back to top</a>
+    </nav>
     <div class="foot-bottom">
       <span>© 2026 Leorus Tech</span>
     </div>
@@ -544,7 +697,7 @@
 <script>
   (function(){
     // scroll-driven look: --p (0..1) is highest when a card sits around the middle of the screen
-    var cards = document.querySelectorAll('.app-row');
+    var cards = document.querySelectorAll('.app-row, .lit');
     var ticking = false;
     function update(){
       ticking = false;
@@ -566,6 +719,16 @@
     window.addEventListener('scroll', req, {passive:true});
     window.addEventListener('resize', req);
     update();
+  })();
+  (function(){
+    // Fill these in to show contact buttons in the footer (leave empty to hide them).
+    var CONTACT = { email: '', whatsapp: '' };   // whatsapp: digits only, with country code, e.g. '911234567890'
+    var box = document.getElementById('foot-contact');
+    var html = '';
+    if (CONTACT.email) html += '<a class="btn-primary" href="mailto:' + CONTACT.email + '">Email us</a>';
+    if (CONTACT.whatsapp) html += '<a class="btn-ghost" href="https://wa.me/' + CONTACT.whatsapp + '">WhatsApp</a>';
+    if (html) { box.innerHTML = html; box.hidden = false; }
+    else { ['.hero-links .btn-ghost', '.nav-cta'].forEach(function(q){ var el = document.querySelector(q); if (el) el.style.display = 'none'; }); }
   })();
   (function(){
     var rows = document.querySelectorAll('.app-row');
