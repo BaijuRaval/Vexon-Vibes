@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="logo.webp" type="image/webp">
+<noscript><style>.loader{display:none!important} body.is-loading{overflow:auto!important}</style></noscript>
 <style>
   :root{
     --bg: #0a0a0c;
@@ -56,6 +58,8 @@
     position:relative;
     width:min(72vw, 380px); aspect-ratio:1;
   }
+  .loader-inner{opacity:0; transition:opacity .5s ease;}
+  .loader.is-ready .loader-inner{opacity:1;}
   .loader-logo{position:absolute; inset:0; width:100%; height:100%; object-fit:contain;}
   /* black engraved base: silhouette with a pressed-in edge highlight */
   .loader-logo.engraved{
@@ -70,9 +74,10 @@
     -webkit-mask-size:300% 100%; mask-size:300% 100%;
     -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat;
     -webkit-mask-position:100% 0; mask-position:100% 0;
-    animation:colorize 4.2s cubic-bezier(.45,.05,.35,1) .5s forwards;
     filter:drop-shadow(0 0 22px rgba(255,31,45,.35));
   }
+  /* animation starts only once the logo has loaded (.is-ready) */
+  .loader.is-ready .loader-logo.color{animation:colorize 4.2s cubic-bezier(.45,.05,.35,1) .5s forwards;}
   @keyframes colorize{
     to{ -webkit-mask-position:0% 0; mask-position:0% 0; }
   }
@@ -191,7 +196,7 @@
     transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1), filter .35s ease;
   }
   .app-row.is-in{opacity:1; transform:none;}
-  .app-row.is-in:hover{filter:drop-shadow(0 22px 34px color-mix(in srgb, var(--accent) 30%, transparent));}
+  .app-row.is-in{filter:drop-shadow(0 22px 34px rgba(255,31,45,calc(.32 * var(--p, 0))));}
   .no-io .app-row{opacity:1; transform:none;}
   .app-card{
     --cut:30px;
@@ -210,28 +215,26 @@
     overflow:hidden;
     transition:transform .35s cubic-bezier(.2,.7,.3,1);
   }
-  .app-card:hover{transform:translateY(-8px);}
+  .app-card{transform:translateY(calc(var(--p, 0) * -8px));}
   /* diagonal edge on the cut corner */
   .app-card::after{
     content:""; position:absolute; top:-1px; right:0; width:var(--cut); height:var(--cut);
     background:linear-gradient(to top right, transparent calc(50% - 1px), var(--accent) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
     opacity:.8; pointer-events:none;
   }
-  /* sweeping shine on hover */
+  /* shine sweeps across as the card scrolls into the centre */
   .app-card .shine{
     position:absolute; inset:0; pointer-events:none;
     background:linear-gradient(105deg, transparent 35%, rgba(255,255,255,.07) 50%, transparent 65%);
-    transform:translateX(-120%); transition:transform .9s ease;
+    transform:translateX(calc(-120% + var(--p, 0) * 240%));
   }
-  .app-card:hover .shine{transform:translateX(120%);}
   .app-card::before{
     content:"0" counter(app);
     position:absolute; right:24px; top:84px;
     font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:84px; line-height:1;
     color:transparent; -webkit-text-stroke:1px rgba(240,242,246,0.08);
-    pointer-events:none; transition:-webkit-text-stroke-color .3s ease;
+    pointer-events:none;
   }
-  .app-card:hover::before{-webkit-text-stroke-color:color-mix(in srgb, var(--accent) 45%, transparent);}
   .app-top{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:26px; position:relative; z-index:1;}
   .app-icon{
     width:60px; height:60px; flex:none; display:grid; place-items:center;
@@ -263,7 +266,7 @@
   }
   .app-foot{
     margin-top:auto; position:relative; z-index:1;
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;
     padding-top:20px; border-top:1px solid var(--hair);
   }
   .app-meta{white-space:nowrap; font-size:13px; color:var(--text-dim); display:inline-flex; align-items:center; gap:8px;}
@@ -282,18 +285,15 @@
     .app-card .shine{display:none;}
   }
 
-  /* default: black engraved cards; on hover the engraving lights up red */
-  @property --accent{ syntax:'<color>'; inherits:true; initial-value:#4a4d57; }
-  @property --accent-soft{ syntax:'<color>'; inherits:true; initial-value:rgba(0,0,0,0); }
-  @property --ink{ syntax:'<color>'; inherits:true; initial-value:#8a8e98; }
-  @property --ink-2{ syntax:'<color>'; inherits:true; initial-value:#6a6e78; }
+  /* Cards are black & engraved; as each card scrolls into the middle of the screen
+     (--p goes 0 -> 1, set from JS) the engraving lights up red. */
   .app-row{
-    --accent:#4a4d57; --accent-soft:rgba(0,0,0,0); --ink:#8a8e98; --ink-2:#6a6e78;
-    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1), filter .35s ease,
-               --accent .45s ease, --accent-soft .45s ease, --ink .45s ease, --ink-2 .45s ease;
-  }
-  .app-row:hover, .app-row:focus-within{
-    --accent:var(--magenta); --accent-soft:var(--magenta-soft); --ink:#ffffff; --ink-2:#c3c8d1;
+    --p:0;
+    --accent: color-mix(in srgb, var(--magenta) calc(var(--p) * 100%), #4a4d57);
+    --accent-soft: color-mix(in srgb, var(--magenta-soft) calc(var(--p) * 100%), transparent);
+    --ink: color-mix(in srgb, #ffffff calc(var(--p) * 100%), #8a8e98);
+    --ink-2: color-mix(in srgb, #c3c8d1 calc(var(--p) * 100%), #6a6e78);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.3,1);
   }
   .app-card{
     background:
@@ -306,19 +306,15 @@
   .app-name{
     background:none; -webkit-background-clip:border-box; background-clip:border-box;
     color:var(--ink);
-    text-shadow:0 1px 0 rgba(255,255,255,.08), 0 -1px 1px rgba(0,0,0,.95);
-    transition:text-shadow .45s ease;
+    text-shadow:0 0 20px rgba(255,31,45,calc(.45 * var(--p))), 0 1px 0 rgba(255,255,255,.08), 0 -1px 1px rgba(0,0,0,.95);
   }
-  .app-row:hover .app-name{text-shadow:0 0 20px rgba(255,31,45,.45), 0 -1px 1px rgba(0,0,0,.95);}
   .app-tag{color:var(--ink-2); text-shadow:0 1px 0 rgba(255,255,255,.05);}
   .app-icon{
     background:#050506;
     border:1px solid #000;
-    box-shadow:inset 0 3px 8px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.07);
+    box-shadow:inset 0 3px 8px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.07), 0 0 22px -4px rgba(255,31,45,calc(.6 * var(--p)));
   }
-  .app-row:hover .app-icon{box-shadow:inset 0 3px 8px rgba(0,0,0,.95), 0 0 22px -4px color-mix(in srgb, var(--accent) 60%, transparent);}
-  .app-category{border-color:#000; background:#050506; color:var(--ink-2); box-shadow:inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06);}
-  .app-row:hover .app-category{color:var(--accent); border-color:color-mix(in srgb, var(--accent) 35%, transparent);}
+  .app-category{border-color:color-mix(in srgb, var(--magenta) calc(var(--p) * 35%), #000); background:#050506; color:color-mix(in srgb, var(--magenta) calc(var(--p) * 100%), var(--ink-2)); box-shadow:inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06);}
   .app-features li{
     color:var(--ink-2);
     background:rgba(0,0,0,.4); border:1px solid #000;
@@ -327,12 +323,11 @@
   .app-foot{border-top-color:rgba(255,255,255,.06); box-shadow:0 -1px 0 #000;}
   .app-meta{color:#4f525b;}
   .app-status{
-    background:#16161a; color:var(--ink-2);
+    background:color-mix(in srgb, var(--magenta) calc(var(--p) * 100%), #16161a); color:color-mix(in srgb, #0a0a0c calc(var(--p) * 100%), #6a6e78);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
-    transition:background .35s ease, color .35s ease, filter .2s ease, transform .2s ease;
+    transition:filter .2s ease, transform .2s ease;
   }
-  .app-row:hover .app-status, .app-row:focus-within .app-status{background:var(--magenta); color:#0a0a0c;}
-  .app-card::before{-webkit-text-stroke-color:rgba(255,255,255,0.04);}
+  .app-card::before{-webkit-text-stroke-color:color-mix(in srgb, var(--magenta) calc(var(--p) * 45%), rgba(255,255,255,0.04));}
 
   /* ---------- FOOTER ---------- */
   .footer{padding:80px 0 48px; text-align:center;}
@@ -354,8 +349,65 @@
 
   @media (max-width:720px){
     .app-grid{grid-template-columns:1fr;}
-    .app-foot{flex-wrap:wrap;}
     .app-card{padding:28px 24px 26px;}
+  }
+
+  /* ---------- HERO + FOOTER: engraved until scrolled into view ----------
+     --p (0 dead/engraved -> 1 active) is set from JS on scroll. */
+  .hero, .footer{
+    --p:0;
+    --ink: color-mix(in srgb, #ffffff calc(var(--p) * 100%), #8a8e98);
+    --ink-2: color-mix(in srgb, #aeb3bd calc(var(--p) * 100%), #5f636d);
+    --engr: 0 1px 0 rgba(255,255,255,.08), 0 -1px 1px rgba(0,0,0,.95);
+  }
+  .hero-mark, .foot-mark{position:relative; aspect-ratio:1;}
+  .hero-mark img, .foot-mark img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain;}
+  .hero-mark img.eng, .foot-mark img.eng{
+    filter:brightness(0) opacity(.9) drop-shadow(0 1px 0 rgba(255,255,255,.16)) drop-shadow(0 -1px 0 rgba(0,0,0,.9));
+  }
+  .hero-mark img.col, .foot-mark img.col{
+    opacity:var(--p);
+    filter:drop-shadow(0 0 40px rgba(255,31,45,calc(.28 * var(--p))));
+  }
+  .hero::before{opacity:var(--p);}
+  .hero::after{opacity:calc(.35 + .65 * var(--p));}
+
+  .hero-tag{
+    color:var(--ink-2); background:#050506; border-color:#000;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06);
+  }
+  .hero-tag i{
+    background:color-mix(in srgb, var(--magenta) calc(var(--p) * 100%), #3a3a42);
+    box-shadow:0 0 calc(12px * var(--p)) rgba(255,31,45,var(--p));
+  }
+  .hero h1{color:var(--ink); text-shadow:var(--engr);}
+  .hero h1 em{
+    background:linear-gradient(100deg,
+      color-mix(in srgb, #ff4a55 calc(var(--p) * 100%), #4a4d57),
+      color-mix(in srgb, #ff1f2d calc(var(--p) * 100%), #4a4d57) 45%,
+      color-mix(in srgb, #c9ced6 calc(var(--p) * 100%), #4a4d57));
+    -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow:none;
+    filter:drop-shadow(0 1px 0 rgba(255,255,255,.08)) drop-shadow(0 -1px 1px rgba(0,0,0,.9));
+  }
+  .hero .sub{color:var(--ink-2); text-shadow:0 1px 0 rgba(255,255,255,.05);}
+  .btn-primary{
+    background:linear-gradient(120deg,
+      color-mix(in srgb, #ff1f2d calc(var(--p) * 100%), #17171b),
+      color-mix(in srgb, #c8102e calc(var(--p) * 100%), #121216) 60%,
+      color-mix(in srgb, #7a0a1c calc(var(--p) * 100%), #0e0e11));
+    color:color-mix(in srgb, #ffffff calc(var(--p) * 100%), #6a6e78);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), 0 12px 30px -12px rgba(255,31,45,calc(.5 * var(--p)));
+  }
+  .btn-ghost{
+    color:var(--ink); background:rgba(0,0,0,.4); border-color:#000;
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.06);
+  }
+
+  .foot-mark{width:clamp(140px, 22vw, 200px); margin:0 auto 22px;}
+  .foot-quote{color:var(--ink); text-shadow:var(--engr);}
+  .foot-bottom{
+    color:var(--ink-2);
+    border-top-color:rgba(255,255,255,.06); box-shadow:0 -1px 0 #000;
   }
 </style>
 </head>
@@ -363,14 +415,15 @@
 
 <div id="loader" class="loader" aria-hidden="true">
   <div class="loader-inner">
-    <img class="loader-logo engraved" src="logo.png" alt="">
-    <img class="loader-logo color" src="logo.png" alt="Leorus Tech">
+    <img class="loader-logo engraved" src="logo.webp" alt="">
+    <img class="loader-logo color" src="logo.webp" alt="Leorus Tech">
   </div>
 </div>
 
 <section class="hero wrap">
   <div class="hero-mark">
-    <img src="logo.png" alt="Leorus Tech logo">
+    <img class="eng" src="logo.webp" alt="" aria-hidden="true">
+    <img class="col" src="logo.webp" alt="Leorus Tech logo">
   </div>
   <span class="hero-tag"><i></i>Mobile apps &amp; software</span>
   <h1>Smart apps for the <em>everyday work</em> that never stops.</h1>
@@ -480,6 +533,7 @@
 
 <footer class="footer" id="contact">
   <div class="wrap">
+    <div class="foot-mark"><img class="eng" src="logo.webp" alt="" aria-hidden="true"><img class="col" src="logo.webp" alt="Leorus Tech"></div>
     <blockquote class="foot-quote">Small, focused apps for the parts of your day admin quietly runs.</blockquote>
     <div class="foot-bottom">
       <span>© 2026 Leorus Tech</span>
@@ -488,6 +542,31 @@
 </footer>
 
 <script>
+  (function(){
+    // scroll-driven look: --p (0..1) is highest when a card sits around the middle of the screen
+    var cards = document.querySelectorAll('.app-row');
+    var ticking = false;
+    function update(){
+      ticking = false;
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      cards.forEach(function(el){
+        var r = el.getBoundingClientRect();
+        var d = Math.abs((r.top + r.height / 2) - vh / 2) / vh;
+        var p = Math.min(1, Math.max(0, 1 - (d - 0.12) / 0.33));
+        p = p * p * (3 - 2 * p);
+        el.style.setProperty('--p', p.toFixed(3));
+      });
+      var sm = function(x){ x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+      var hero = document.querySelector('.hero');
+      if (hero) hero.style.setProperty('--p', sm((hero.getBoundingClientRect().bottom - vh * 0.15) / (vh * 0.6)).toFixed(3));
+      var foot = document.querySelector('.footer');
+      if (foot) { var fr = foot.getBoundingClientRect(); foot.style.setProperty('--p', sm((vh - fr.top) / (Math.min(fr.height, vh) * 0.9)).toFixed(3)); }
+    }
+    function req(){ if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener('scroll', req, {passive:true});
+    window.addEventListener('resize', req);
+    update();
+  })();
   (function(){
     var rows = document.querySelectorAll('.app-row');
     if (!('IntersectionObserver' in window)) { document.documentElement.classList.add('no-io'); return; }
@@ -498,20 +577,40 @@
   })();
   (function(){
     var loader = document.getElementById('loader');
-    var MIN_MS = 5000;
-    var start = Date.now();
-    function reveal(){
-      var wait = Math.max(0, MIN_MS - (Date.now() - start));
+    var MIN_MS = 5000;   // time the colorize sequence needs once the logo is visible
+    var MAX_WAIT = 10000; // never block the page longer than this waiting for the logo
+    var imgs = Array.prototype.slice.call(loader.querySelectorAll('img'));
+    var readyAt = 0, pageLoaded = false, finished = false;
+
+    function finish(){
+      if (finished || !readyAt || !pageLoaded) return;
+      var wait = Math.max(0, MIN_MS - (Date.now() - readyAt));
+      finished = true;
       setTimeout(function(){
         loader.classList.add('is-hidden');
         document.body.classList.remove('is-loading');
       }, wait);
     }
-    if (document.readyState === 'complete') {
-      reveal();
-    } else {
-      window.addEventListener('load', reveal);
+    function ready(){
+      if (readyAt) return;
+      readyAt = Date.now();
+      loader.classList.add('is-ready'); // starts the engraved -> colour sequence
+      finish();
     }
+    function imgDone(img){
+      return new Promise(function(res){
+        if (img.complete && img.naturalWidth) return res();
+        img.addEventListener('load', res);
+        img.addEventListener('error', res);
+      });
+    }
+    Promise.all(imgs.map(imgDone)).then(function(){
+      return Promise.all(imgs.map(function(i){ return i.decode ? i.decode().catch(function(){}) : 0; }));
+    }).then(ready);
+    setTimeout(ready, MAX_WAIT);
+
+    if (document.readyState === 'complete') { pageLoaded = true; finish(); }
+    else window.addEventListener('load', function(){ pageLoaded = true; finish(); });
   })();
 </script>
 
