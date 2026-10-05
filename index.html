@@ -13,8 +13,8 @@
 <noscript><style>.loader{display:none!important} body.is-loading{overflow:auto!important}</style></noscript>
 <style>
   :root{
-    --bg: #0a0a0c;
-    --bg-raise: #121215;
+    --bg: #111114;
+    --bg-raise: #111114;
     --bg-raise-2: #18181d;
     --hair: rgba(240,242,246,0.10);
     --hair-strong: rgba(240,242,246,0.18);
@@ -491,6 +491,59 @@
     .tiles, .steps{grid-template-columns:1fr;}
     .band{padding-top:56px;}
   }
+
+  /* ================= ENGRAVED + INNER GLOW PASS =================
+     One page background; every surface and every text is carved into it.
+     --p (0 dead -> 1 active, set from JS on scroll) lights things up from the inside. */
+  .seam{display:none;}
+  .apps-head{--p:0;}
+  .app-row, .lit, .hero, .footer, .apps-head{
+    --ink: color-mix(in srgb, #ffe6e8 calc(var(--p, 0) * 100%), #3d4048);
+    --ink-2: color-mix(in srgb, #e0bfc3 calc(var(--p, 0) * 100%), #353841);
+    --tsh: 0 1px 0 rgba(255,255,255,.07), 0 -1px 1px rgba(0,0,0,.9), 0 0 calc(var(--p, 0) * 16px) rgba(255,31,45,calc(var(--p, 0) * .6));
+    --glow-in: inset 0 0 calc(var(--p, 0) * 34px) rgba(255,31,45,calc(var(--p, 0) * .30));
+    --glow-sm: inset 0 0 calc(var(--p, 0) * 12px) rgba(255,31,45,calc(var(--p, 0) * .55));
+  }
+  /* carved text */
+  .app-name, .app-tag, .app-features li, .hero h1, .hero .sub, .hero-tag, .btn-ghost,
+  .lit h3, .lit p, .faq-item summary, .foot-quote, .foot-bottom, .foot-links a,
+  .apps-head h2, .apps-head .eyebrow, .app-category{text-shadow:var(--tsh);}
+  .hero h1 em{text-shadow:none;}
+  .apps-head h2{color:var(--ink);}
+  .apps-head .eyebrow{color:var(--ink-2);}
+  .app-meta{color:var(--ink-2);}
+  .app-features li{color:var(--ink-2);}
+
+  /* surfaces: pressed into the page, glowing from within (no outer glow) */
+  .app-row.is-in{filter:none;}
+  .app-card{
+    box-shadow:inset 0 4px 14px rgba(0,0,0,.95), inset 0 -1px 0 rgba(255,255,255,.05), inset 1px 0 0 rgba(255,255,255,.03), var(--glow-in);
+  }
+  .lit{
+    box-shadow:inset 0 4px 14px rgba(0,0,0,.95), inset 0 -1px 0 rgba(255,255,255,.05), var(--glow-in);
+  }
+  .app-icon, .tile-icon{
+    box-shadow:inset 0 3px 8px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.07), var(--glow-sm);
+  }
+  .app-category, .hero-tag{
+    box-shadow:inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.06), var(--glow-sm);
+  }
+  .app-features li, .btn-ghost{
+    box-shadow:inset 0 2px 6px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.05), var(--glow-sm);
+  }
+  .app-status, .btn-primary{
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 calc(var(--p, 0) * 16px) rgba(255,205,208,calc(var(--p, 0) * .5));
+  }
+  .app-status, .btn-primary{text-shadow:none;}
+  .hero-tag i{box-shadow:0 0 calc(12px * var(--p)) rgba(255,31,45,var(--p));}
+  .hero-mark img.col, .foot-mark img.col{filter:drop-shadow(0 0 calc(34px * var(--p)) rgba(255,31,45,calc(.28 * var(--p))));}
+
+  /* nav: carved into the page too */
+  .nav{background:rgba(17,17,20,.86);}
+  .nav-brand{color:#565a64; text-shadow:0 1px 0 rgba(255,255,255,.07), 0 -1px 1px rgba(0,0,0,.9);}
+  .nav-links a{color:#565a64; text-shadow:0 1px 0 rgba(255,255,255,.06), 0 -1px 1px rgba(0,0,0,.9);}
+  .nav-links a:hover, .nav-brand:hover{color:#ffe6e8; background:rgba(0,0,0,.35); box-shadow:inset 0 0 14px rgba(255,31,45,.45); text-shadow:0 0 14px rgba(255,31,45,.6);}
+  .nav-links a.nav-cta{color:#ffe6e8; background:linear-gradient(120deg,#ff1f2d,#c8102e); box-shadow:inset 0 0 14px rgba(255,205,208,.45); text-shadow:none;}
 </style>
 </head>
 <body class="is-loading">
@@ -697,7 +750,7 @@
 <script>
   (function(){
     // scroll-driven look: --p (0..1) is highest when a card sits around the middle of the screen
-    var cards = document.querySelectorAll('.app-row, .lit');
+    var cards = document.querySelectorAll('.app-row, .lit, .apps-head');
     var ticking = false;
     function update(){
       ticking = false;
