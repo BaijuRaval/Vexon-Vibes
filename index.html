@@ -266,7 +266,7 @@
   }
   .app-foot{
     margin-top:auto; position:relative; z-index:1;
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px;
     padding-top:20px; border-top:1px solid var(--hair);
   }
   .app-meta{white-space:nowrap; font-size:13px; color:var(--text-dim); display:inline-flex; align-items:center; gap:8px;}
@@ -349,7 +349,6 @@
 
   @media (max-width:720px){
     .app-grid{grid-template-columns:1fr;}
-    .app-foot{flex-wrap:wrap;}
     .app-card{padding:28px 24px 26px;}
   }
 </style>
